@@ -1,10 +1,17 @@
 <script setup>
 import { ref } from 'vue'
+import GoalItem from './component/GoalItem.vue' // import the file 
+
+
 
 const goals = ref([
-  { text: 'Learn Vue basics', rating: 5 },
+  { text: 'Learn Vue Components', rating: 5 },
   { text: 'Upload to GitHub', rating: 4 }
 ])
+
+function removeGoal(index){
+  goals.value.splice(index,1)
+}
 
 const newGoalText = ref('')
 const newGoalRating = ref(1)
@@ -19,19 +26,22 @@ function addGoal() {
   }
 }
 
-function deleteGoal(index) {
-  goals.value.splice(index, 1)
-}
+
 </script>
 
 <template>
   <div class="card">
     <h1>My Coding Goals</h1>
     
-    <div class="input-group">
-      <input v-model="newGoalText" placeholder="New goal..." />
-      <input v-model.number="newGoalRating" type="number" min="1" max="5" />
-      <button @click="addGoal">Add</button>
+    <div class="card">
+      <h1>My Goals</h1>
+      // We gonna loop it 
+      <GoalItem
+      v-for ="(goal,index) in goals"
+      :key="index"
+      :goal="goal"
+      @delete ="removeGoal(index)"
+      />
     </div>
 
     <ul>
