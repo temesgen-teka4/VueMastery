@@ -1,55 +1,51 @@
 <script setup>
 import { ref } from 'vue'
-import GoalItem from './component/GoalItem.vue' // import the file 
+import GoalItem from './GoalItem.vue'
+import {computed} from 'vue'
 
 
+
+const totalGoals = computed(()=>goals.value.length)
 
 const goals = ref([
   { text: 'Learn Vue Components', rating: 5 },
   { text: 'Upload to GitHub', rating: 4 }
 ])
 
-function removeGoal(index){
-  goals.value.splice(index,1)
-}
-
 const newGoalText = ref('')
 const newGoalRating = ref(1)
 
 function addGoal() {
   if (newGoalText.value) {
-    goals.value.push({ 
-      text: newGoalText.value, 
-      rating: newGoalRating.value 
-    })
+    goals.value.push({ text: newGoalText.value, rating: newGoalRating.value })
     newGoalText.value = ''
   }
 }
 
-
+function removeGoal(index) {
+  goals.value.splice(index, 1)
+}
 </script>
 
 <template>
   <div class="card">
     <h1>My Coding Goals</h1>
+    <p>{totalGoals}</p>
     
-    <div class="card">
-      <h1>My Goals</h1>
-      // We gonna loop it 
-      <GoalItem
-      v-for ="(goal,index) in goals"
-      :key="index"
-      :goal="goal"
-      @delete ="removeGoal(index)"
-      />
+    <!-- Input Section -->
+    <div class="input-group">
+      <input v-model="newGoalText" placeholder="New goal..." />
+      <input v-model.number="newGoalRating" type="number" min="1" max="5" />
+      <button @click="addGoal">Add</button>
     </div>
 
-    <ul>
-      <li v-for="(goal, index) in goals" :key="index" class="goal-item">
-        <span>{{ goal.text }} (⭐ {{ goal.rating }})</span>
-        <button @click="deleteGoal(index)" class="del-btn">Delete</button>
-      </li>
-    </ul>
+    <!-- Goal List using Component -->
+    <GoalItem
+      v-for="(goal, index) in goals"
+      :key="index"
+      :goal="goal"
+      @delete="removeGoal(index)"
+    />
   </div>
 </template>
 
@@ -63,17 +59,7 @@ function addGoal() {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   font-family: sans-serif;
 }
-
 .input-group { display: flex; gap: 5px; margin-bottom: 20px; }
-
-.goal-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-.del-btn { background: #ff4d4d; color: white; border: none; border-radius: 4px; cursor: pointer; }
-input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
 button { padding: 8px 12px; cursor: pointer; }
+input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
 </style>
