@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import GoalItem from './GoalItem.vue'
 import {computed} from 'vue'
+import GoalItem from './GoalItem.vue'
 
 
 
@@ -28,6 +29,17 @@ function removeGoal(index) {
 </script>
 
 <template>
+
+  <ul v-if ="goal.length>0">
+  <GoalItem   
+  v-for ="(goal,index) in goals"
+  :key="index"
+  :goal="goal"
+  @delete="removeGoal(index)"
+  />
+
+  </ul>
+  <p v-else style ="color:gray;text-align:center;">NO GOALS ADD NEW GOALS</p>
   <div class="card">
     <h1>My Coding Goals</h1>
     <p>{totalGoals}</p>
