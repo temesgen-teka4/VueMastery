@@ -44,7 +44,7 @@ const totalGoals = computed(() => goals.value.length)
         @delete="removeGoal(index)"
       />
     </ul>
-    <p v-else style="color: gray; text-align: center;">No Goals! Add New!/p>
+    <p v-else style="color: gray; text-align: center;">No Goals! Add New!</p>
   </div>
 </template>
 

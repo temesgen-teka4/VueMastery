@@ -2,15 +2,14 @@
 // Props: ከወላጅ የምንቀበለው መረጃ
 defineProps(['goal'])
 
-// Emits: ለወላጅ የምንልክለት ምልክት
-// ስህተቱ እዚህ ነበር -> () መጨመር አለበት
+
 const emit = defineEmits(['delete'])
 </script>
 
 <template>
   <div class="goal-item">
     <span>{{ goal.text }} (⭐{{ goal.rating }})</span>
-    <!-- Delete ሲነካ ለወላጁ 'delete' የሚል ምልክት እንልካለን -->
+ 
     <button @click="emit('delete')" class="del-btn">Delete</button>
   </div>
 </template>
