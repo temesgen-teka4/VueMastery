@@ -1,12 +1,6 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import GoalItem from './GoalItem.vue'
-import {computed} from 'vue'
-import GoalItem from './GoalItem.vue'
-
-
-
-const totalGoals = computed(()=>goals.value.length)
 
 const goals = ref([
   { text: 'Learn Vue Components', rating: 5 },
@@ -26,38 +20,31 @@ function addGoal() {
 function removeGoal(index) {
   goals.value.splice(index, 1)
 }
+
+const totalGoals = computed(() => goals.value.length)
 </script>
 
 <template>
-
-  <ul v-if ="goal.length>0">
-  <GoalItem   
-  v-for ="(goal,index) in goals"
-  :key="index"
-  :goal="goal"
-  @delete="removeGoal(index)"
-  />
-
-  </ul>
-  <p v-else style ="color:gray;text-align:center;">NO GOALS ADD NEW GOALS</p>
   <div class="card">
     <h1>My Coding Goals</h1>
-    <p>{totalGoals}</p>
     
-    <!-- Input Section -->
     <div class="input-group">
       <input v-model="newGoalText" placeholder="New goal..." />
       <input v-model.number="newGoalRating" type="number" min="1" max="5" />
       <button @click="addGoal">Add</button>
     </div>
 
-    <!-- Goal List using Component -->
-    <GoalItem
-      v-for="(goal, index) in goals"
-      :key="index"
-      :goal="goal"
-      @delete="removeGoal(index)"
-    />
+    <p>Total Goals: {{ totalGoals }}</p>
+
+    <ul v-if="goals.length > 0">
+      <GoalItem
+        v-for="(goal, index) in goals"
+        :key="index"
+        :goal="goal"
+        @delete="removeGoal(index)"
+      />
+    </ul>
+    <p v-else style="color: gray; text-align: center;">No Goals! Add New!/p>
   </div>
 </template>
 
