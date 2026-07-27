@@ -1,11 +1,16 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import GoalItem from './GoalItem.vue'
 
 const goals = ref([
   { text: 'Learn Vue Components', rating: 5 },
   { text: 'Upload to GitHub', rating: 4 }
 ])
+
+// goals ከተፈጠረ በኋላ watch ማድረግ እንችላለን
+watch(goals, (newValue) => {
+  console.log('ጎሎች ተቀይረዋል! አጠቃላይ ብዛት:', newValue.length)
+}, { deep: true })
 
 const newGoalText = ref('')
 const newGoalRating = ref(1)
