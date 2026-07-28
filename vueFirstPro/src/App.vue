@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import GoalItem from './GoalItem.vue'
 
 const goals = ref([
@@ -7,9 +7,17 @@ const goals = ref([
   { text: 'Upload to GitHub', rating: 4 }
 ])
 
-// goals ከተፈጠረ በኋላ watch ማድረግ እንችላለን
+// 1. ፔጁ ሲከፈት ከ LocalStorage መረጃውን እንቀበላለን
+onMounted(() => {
+  const savedGoals = localStorage.getItem('goals')
+  if (savedGoals) {
+    goals.value = JSON.parse(savedGoals)
+  }
+})
+
+// 2. ጎሎች ሲቀየሩ በራሳቸው በ LocalStorage ውስጥ ይቀመጣሉ
 watch(goals, (newValue) => {
-  console.log('ጎሎች ተቀይረዋል! አጠቃላይ ብዛት:', newValue.length)
+  localStorage.setItem('goals', JSON.stringify(newValue))
 }, { deep: true })
 
 const newGoalText = ref('')
