@@ -2,12 +2,10 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import GoalItem from './GoalItem.vue'
 
-const goals = ref([
-  { text: 'Learn Vue Components', rating: 5 },
-  { text: 'Upload to GitHub', rating: 4 }
-])
+// 1. ጅምር ላይ ጎሎቹ ባዶ (empty array) ይሁኑ
+const goals = ref([])
 
-// 1. ፔጁ ሲከፈት ከ LocalStorage መረጃውን እንቀበላለን
+// 2. ፔጁ ሲከፈት ከ LocalStorage ያስቀመጥናቸውን እናምጣ
 onMounted(() => {
   const savedGoals = localStorage.getItem('goals')
   if (savedGoals) {
@@ -15,7 +13,7 @@ onMounted(() => {
   }
 })
 
-// 2. ጎሎች ሲቀየሩ በራሳቸው በ LocalStorage ውስጥ ይቀመጣሉ
+// 3. ጎሎች ሲቀየሩ በ LocalStorage ውስጥ እናስቀምጣለን
 watch(goals, (newValue) => {
   localStorage.setItem('goals', JSON.stringify(newValue))
 }, { deep: true })
@@ -24,7 +22,7 @@ const newGoalText = ref('')
 const newGoalRating = ref(1)
 
 function addGoal() {
-  if (newGoalText.value) {
+  if (newGoalText.value.trim()) {
     goals.value.push({ text: newGoalText.value, rating: newGoalRating.value })
     newGoalText.value = ''
   }
