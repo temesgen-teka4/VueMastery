@@ -2,10 +2,11 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import GoalItem from './GoalItem.vue'
 
-// 1. ጅምር ላይ ጎሎቹ ባዶ (empty array) ይሁኑ
 const goals = ref([])
+const newGoalText = ref('')
+const newGoalRating = ref(1)
+const errorMessage = ref('') // 1. የኤረር መልእክት ማከማቻ
 
-// 2. ፔጁ ሲከፈት ከ LocalStorage ያስቀመጥናቸውን እናምጣ
 onMounted(() => {
   const savedGoals = localStorage.getItem('goals')
   if (savedGoals) {
@@ -13,19 +14,20 @@ onMounted(() => {
   }
 })
 
-// 3. ጎሎች ሲቀየሩ በ LocalStorage ውስጥ እናስቀምጣለን
 watch(goals, (newValue) => {
   localStorage.setItem('goals', JSON.stringify(newValue))
 }, { deep: true })
 
-const newGoalText = ref('')
-const newGoalRating = ref(1)
-
 function addGoal() {
-  if (newGoalText.value.trim()) {
-    goals.value.push({ text: newGoalText.value, rating: newGoalRating.value })
-    newGoalText.value = ''
+  // 2. Validation: ጽሁፉ ባዶ ከሆነ ኤረር አሳይ
+  if (!newGoalText.value.trim()) {
+    errorMessage.value = 'እባክዎ ትክክለኛ ጎል ያስገቡ!'
+    return
   }
+
+  errorMessage.value = '' // ኤረር ከሌለ እናጸዳዋለን
+  goals.value.push({ text: newGoalText.value, rating: newGoalRating.value })
+  newGoalText.value = ''
 }
 
 function removeGoal(index) {
@@ -44,6 +46,11 @@ const totalGoals = computed(() => goals.value.length)
       <input v-model.number="newGoalRating" type="number" min="1" max="5" />
       <button @click="addGoal">Add</button>
     </div>
+
+    <!-- 3. ኤረር ካለ እዚህ እናሳያለን -->
+    <p v-if="errorMessage" style="color: red; font-size: 14px; margin-top: -10px; margin-bottom: 10px;">
+      {{ errorMessage }}
+    </p>
 
     <p>Total Goals: {{ totalGoals }}</p>
 
