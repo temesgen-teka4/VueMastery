@@ -5,7 +5,8 @@ import GoalItem from './GoalItem.vue'
 const goals = ref([])
 const newGoalText = ref('')
 const newGoalRating = ref(1)
-const errorMessage = ref('') // 1. የኤረር መልእክት ማከማቻ
+const errorMessage = ref('') 
+const searchQuery = ref('') // 1. የፍለጋ ቃል ማከማቻ
 
 onMounted(() => {
   const savedGoals = localStorage.getItem('goals')
@@ -19,27 +20,38 @@ watch(goals, (newValue) => {
 }, { deep: true })
 
 function addGoal() {
-  // 2. Validation: ጽሁፉ ባዶ ከሆነ ኤረር አሳይ
   if (!newGoalText.value.trim()) {
     errorMessage.value = 'እባክዎ ትክክለኛ ጎል ያስገቡ!'
     return
   }
 
-  errorMessage.value = '' // ኤረር ከሌለ እናጸዳዋለን
+  errorMessage.value = ''
   goals.value.push({ text: newGoalText.value, rating: newGoalRating.value })
   newGoalText.value = ''
 }
 
 function removeGoal(index) {
-  goals.value.splice(index, 1)
+  // ፈልጎ ከማጥፋት አንፃር ትክክለኛው ኢንዴክስ እንዲጠፋ
+  const target = filteredGoals.value[index]
+  const originalIndex = goals.value.indexOf(target)
+  if (originalIndex > -1) {
+    goals.value.splice(originalIndex, 1)
+  }
 }
 
 const totalGoals = computed(() => goals.value.length)
+
+// 2. በጽሁፍ እየፈለገ የሚያመጣ Computed Property
+const filteredGoals = computed(() => {
+  return goals.value.filter(goal => 
+    goal.text.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+})
 </script>
 
 <template>
   <div class="card">
-    <h1>My Coding Goals</h1>
+    <h1 class="h1">My Coding Goals</h1>
     
     <div class="input-group">
       <input v-model="newGoalText" placeholder="New goal..." />
@@ -47,36 +59,44 @@ const totalGoals = computed(() => goals.value.length)
       <button @click="addGoal">Add</button>
     </div>
 
-    <!-- 3. ኤረር ካለ እዚህ እናሳያለን -->
-    <p v-if="errorMessage" style="color: red; font-size: 14px; margin-top: -10px; margin-bottom: 10px;">
+    <!-- የፍለጋ መስመር (Search Input) -->
+    <div class="input-group" style="margin-top: 10px;">
+      <input v-model="searchQuery" placeholder="Search goals..." style="width: 100%;" />
+    </div>
+
+    <p v-if="errorMessage" style="color: red; font-size: 14px; margin-top: -5px; margin-bottom: 10px;">
       {{ errorMessage }}
     </p>
 
-    <p>Total Goals: {{ totalGoals }}</p>
+    <p v-else style="color:aliceblue">Total Goals: {{ totalGoals }}</p>
 
-    <ul v-if="goals.length > 0">
+    <ul v-if="filteredGoals.length > 0">
       <GoalItem
-        v-for="(goal, index) in goals"
+        v-for="(goal, index) in filteredGoals"
         :key="index"
         :goal="goal"
         @delete="removeGoal(index)"
       />
     </ul>
-    <p v-else style="color: gray; text-align: center;">No Goals! Add New!</p>
+    <p v-else style="color: gray; text-align: center;">No Goals Found!</p>
   </div>
 </template>
 
 <style scoped>
+.h1 {
+  color:rgb(218, 222, 225);
+  font-size:x-large;
+}
 .card {
   max-width: 400px;
   margin: 50px auto;
   padding: 20px;
-  background: #f9f9f9;
+  background: #18144b;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(107, 14, 14, 0.1);
   font-family: sans-serif;
 }
-.input-group { display: flex; gap: 5px; margin-bottom: 20px; }
+.input-group { display: flex; gap: 5px; margin-bottom: 20px; color:rgb(220, 235, 235) }
 button { padding: 8px 12px; cursor: pointer; }
-input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+input { padding: 8px; border: 1px solid #6d8ec0; border-radius: 4px; }
 </style>
