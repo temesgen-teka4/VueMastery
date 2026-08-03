@@ -6,7 +6,7 @@ const goals = ref([])
 const newGoalText = ref('')
 const newGoalRating = ref(1)
 const errorMessage = ref('') 
-const searchQuery = ref('') // 1. የፍለጋ ቃል ማከማቻ
+const searchQuery = ref('') 
 
 onMounted(() => {
   const savedGoals = localStorage.getItem('goals')
@@ -31,7 +31,6 @@ function addGoal() {
 }
 
 function removeGoal(index) {
-  // ፈልጎ ከማጥፋት አንፃር ትክክለኛው ኢንዴክስ እንዲጠፋ
   const target = filteredGoals.value[index]
   const originalIndex = goals.value.indexOf(target)
   if (originalIndex > -1) {
@@ -41,7 +40,13 @@ function removeGoal(index) {
 
 const totalGoals = computed(() => goals.value.length)
 
-// 2. በጽሁፍ እየፈለገ የሚያመጣ Computed Property
+// አዲስ: የደረጃዎች አማካይ (Average Rating) የሚያሰላ computed
+const averageRating = computed(() => {
+  if (goals.value.length === 0) return 0
+  const sum = goals.value.reduce((acc, goal) => acc + Number(goal.rating), 0)
+  return (sum / goals.value.length).toFixed(1)
+})
+
 const filteredGoals = computed(() => {
   return goals.value.filter(goal => 
     goal.text.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -59,7 +64,6 @@ const filteredGoals = computed(() => {
       <button @click="addGoal">Add</button>
     </div>
 
-    <!-- የፍለጋ መስመር (Search Input) -->
     <div class="input-group" style="margin-top: 10px;">
       <input v-model="searchQuery" placeholder="Search goals..." style="width: 100%;" />
     </div>
@@ -68,7 +72,11 @@ const filteredGoals = computed(() => {
       {{ errorMessage }}
     </p>
 
-    <p v-else style="color:aliceblue">Total Goals: {{ totalGoals }}</p>
+    <!-- የስታትስቲክስ ማሳያ (Total & Average) -->
+    <div v-else style="display: flex; justify-content: space-between; color: aliceblue; margin-bottom: 15px; font-size: 14px;">
+      <p>Total Goals: {{ totalGoals }}</p>
+      <p>Avg Rating: ⭐ {{ averageRating }}</p>
+    </div>
 
     <ul v-if="filteredGoals.length > 0">
       <GoalItem
