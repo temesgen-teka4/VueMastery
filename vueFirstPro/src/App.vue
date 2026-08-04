@@ -38,9 +38,16 @@ function removeGoal(index) {
   }
 }
 
+// አዲስ: ሁሉንም ጎሎች በአንዴ ማጥፊያ ፋንክሽን
+function clearAllGoals() {
+  if (confirm('ሁሉንም ጎሎች ማጥፋት ትፈልጋለህ?')) {
+    goals.value = []
+    errorMessage.value = ''
+  }
+}
+
 const totalGoals = computed(() => goals.value.length)
 
-// አዲስ: የደረጃዎች አማካይ (Average Rating) የሚያሰላ computed
 const averageRating = computed(() => {
   if (goals.value.length === 0) return 0
   const sum = goals.value.reduce((acc, goal) => acc + Number(goal.rating), 0)
@@ -72,8 +79,7 @@ const filteredGoals = computed(() => {
       {{ errorMessage }}
     </p>
 
-    <!-- የስታትስቲክስ ማሳያ (Total & Average) -->
-    <div v-else style="display: flex; justify-content: space-between; color: aliceblue; margin-bottom: 15px; font-size: 14px;">
+    <div v-else style="display: flex; justify-content: space-between; color: aliceblue; margin-bottom: 15px; font-size: 14px; align-items: center;">
       <p>Total Goals: {{ totalGoals }}</p>
       <p>Avg Rating: ⭐ {{ averageRating }}</p>
     </div>
@@ -87,6 +93,15 @@ const filteredGoals = computed(() => {
       />
     </ul>
     <p v-else style="color: gray; text-align: center;">No Goals Found!</p>
+
+    <!-- ሁሉንም ማጥፊያ ቁልፍ (Clear All Button) -->
+    <button 
+      v-if="goals.length > 0" 
+      @click="clearAllGoals" 
+      style="width: 100%; margin-top: 15px; background-color: #ef4444; color: white; border: none; border-radius: 4px; padding: 8px; cursor: pointer;"
+    >
+      Clear All Goals
+    </button>
   </div>
 </template>
 
