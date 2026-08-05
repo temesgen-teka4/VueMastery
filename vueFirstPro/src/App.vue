@@ -26,7 +26,8 @@ function addGoal() {
   }
 
   errorMessage.value = ''
-  goals.value.push({ text: newGoalText.value, rating: newGoalRating.value })
+  // አዲስ ጎል ስንጨምር completed: false ብለን እንጀምራለን
+  goals.value.push({ text: newGoalText.value, rating: newGoalRating.value, completed: false })
   newGoalText.value = ''
 }
 
@@ -38,7 +39,15 @@ function removeGoal(index) {
   }
 }
 
-// አዲስ: ሁሉንም ጎሎች በአንዴ ማጥፊያ ፋንክሽን
+// አዲስ: የጎልን ሁኔታ (completed) የሚቀይር ፋንክሽን
+function toggleGoal(index) {
+  const target = filteredGoals.value[index]
+  const originalIndex = goals.value.indexOf(target)
+  if (originalIndex > -1) {
+    goals.value[originalIndex].completed = !goals.value[originalIndex].completed
+  }
+}
+
 function clearAllGoals() {
   if (confirm('ሁሉንም ጎሎች ማጥፋት ትፈልጋለህ?')) {
     goals.value = []
@@ -90,11 +99,11 @@ const filteredGoals = computed(() => {
         :key="index"
         :goal="goal"
         @delete="removeGoal(index)"
+        @toggle="toggleGoal(index)"
       />
     </ul>
     <p v-else style="color: gray; text-align: center;">No Goals Found!</p>
 
-    <!-- ሁሉንም ማጥፊያ ቁልፍ (Clear All Button) -->
     <button 
       v-if="goals.length > 0" 
       @click="clearAllGoals" 
